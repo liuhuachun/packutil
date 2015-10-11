@@ -26,6 +26,11 @@ func (m *ProjectModel) RowCount() int {
 	return len(m.items)
 }
 
+//通过索引获取数据
+func (m *ProjectModel) GetItemByindex(index int64) *Project {
+	return m.items[index]
+}
+
 // Called by the TableView when it needs the text to display for a given cell.
 func (m *ProjectModel) Value(row, col int) interface{} {
 	item := m.items[row]

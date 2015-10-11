@@ -108,6 +108,18 @@ func SaveProjectObject(proj Project) error {
 	return err
 }
 
+//通过id删除记录
+func DeleteById(id int64) error {
+	_, err := engine.Delete(&Project{Id: id})
+	return err
+}
+
+//删除传过来的数据
+func DeleteByObj(obj *Project) error {
+	_, err := engine.Delete(obj)
+	return err
+}
+
 //获取数据库中项目的数量
 func GetProjectTotal() (int64, error) {
 	counts, err := engine.Count(&Project{})

@@ -2,6 +2,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/lxn/walk"
 	. "github.com/lxn/walk/declarative"
 	"log"
@@ -195,6 +196,7 @@ func CreateProj_Triggered(owner walk.Form, model *xorm.ProjectModel) {
 **/
 func CreateProj_Query(owner walk.Form) {
 	var dlg *walk.Dialog
+	var tv *walk.TableView
 	var dialog = Dialog{}
 	model := xorm.NewProjectModel()
 
@@ -204,6 +206,7 @@ func CreateProj_Query(owner walk.Form) {
 	dialog.MinSize = Size{650, 300}
 	dialog.Children = []Widget{
 		TableView{
+			AssignTo:              &tv,
 			AlternatingRowBGColor: walk.RGB(255, 255, 224),
 			ColumnsOrderable:      true,
 			Columns: []TableViewColumn{
@@ -226,8 +229,20 @@ func CreateProj_Query(owner walk.Form) {
 					},
 				},
 				PushButton{
-					Text:      "删除",
-					OnClicked: func() { dlg.Cancel() },
+					Text: "删除",
+					OnClicked: func() {
+						indexs := tv.SelectedIndexes()
+						if indexs.Len() == 0 {
+							walk.MsgBox(owner, "提示", "请选择要删除的数据", walk.MsgBoxIconError)
+							return
+						}
+						walk.MsgBox(owner, "提示", "确认是否删除此工程", walk.MsgBoxOKCancel)
+
+						obj := model.GetItemByindex(int64(indexs.At(0)))
+						fmt.Println(indexs.At(0))
+						xorm.DeleteByObj(obj)
+						model.ResetRows()
+					},
 				},
 			},
 		},
