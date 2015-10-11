@@ -51,7 +51,7 @@ func init() {
 	engine.ShowErr = true   //则会在控制台打印错误信息；
 	engine.ShowWarn = true  //则会在控制台打印警告信息；
 
-	f, err := os.Create("./log/sql.log")
+	f, err := os.Create("./logs/sql.log")
 	if err != nil {
 		fmt.Println(err.Error())
 		return
