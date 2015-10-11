@@ -33,17 +33,46 @@ func main() {
 
 	sysWin.MenuItems = []MenuItem{
 		Menu{
-			Text: "项目",
+			Text: "工程",
 			Items: []MenuItem{
 				Action{
-					Text:     "创建",
-					Shortcut: Shortcut{walk.ModControl, walk.KeyC},
+					Text:     "工程管理",
+					Shortcut: Shortcut{walk.ModControl, walk.KeyQ},
 					OnTriggered: func() {
-						CreateProj_Triggered(mw)
+						CreateProj_Query(mw)
 					},
 				},
+				Separator{},
 				Action{
-					Text:     "查看",
+					Text:        "退出",
+					Shortcut:    Shortcut{walk.ModControl, walk.KeyE},
+					OnTriggered: func() { mw.Close() },
+				},
+			},
+		},
+		Menu{
+			Text: "版本",
+			Items: []MenuItem{
+				Action{
+					Text:     "版本管理",
+					Shortcut: Shortcut{walk.ModControl, walk.KeyQ},
+					OnTriggered: func() {
+						CreateProj_Query(mw)
+					},
+				},
+				Separator{},
+				Action{
+					Text:        "退出",
+					Shortcut:    Shortcut{walk.ModControl, walk.KeyE},
+					OnTriggered: func() { mw.Close() },
+				},
+			},
+		},
+		Menu{
+			Text: "补丁",
+			Items: []MenuItem{
+				Action{
+					Text:     "补丁管理",
 					Shortcut: Shortcut{walk.ModControl, walk.KeyQ},
 					OnTriggered: func() {
 						CreateProj_Query(mw)
@@ -81,7 +110,7 @@ func main() {
 /**
  *添加项目的方法
  */
-func CreateProj_Triggered(owner walk.Form) {
+func CreateProj_Triggered(owner walk.Form, model *xorm.ProjectModel) {
 	var dlg *walk.Dialog
 	var db *walk.DataBinder
 	var ep walk.ErrorPresenter
@@ -90,7 +119,7 @@ func CreateProj_Triggered(owner walk.Form) {
 
 	var dialog = Dialog{}
 	dialog.AssignTo = &dlg
-	dialog.Title = "创建项目"
+	dialog.Title = "创建工程"
 	dialog.DataBinder = DataBinder{
 		AssignTo:       &db,
 		DataSource:     project,
@@ -145,6 +174,7 @@ func CreateProj_Triggered(owner walk.Form) {
 							return
 						}
 						xorm.SaveProjectObject(*project)
+						model.ResetRows()
 						dlg.Accept()
 					},
 				},
@@ -181,10 +211,25 @@ func CreateProj_Query(owner walk.Form) {
 				{Title: "名称"},
 				{Title: "创建者"},
 				{Title: "创建时间", Format: "2006-01-02 15:04:05", Width: 130},
-				{Title: "描述"},
-				{Title: "操作"},
+				{Title: "描述", Width: 200},
 			},
 			Model: model,
+		},
+		Composite{
+			Layout: HBox{},
+			Children: []Widget{
+				HSpacer{},
+				PushButton{
+					Text: "创建",
+					OnClicked: func() {
+						CreateProj_Triggered(owner, model)
+					},
+				},
+				PushButton{
+					Text:      "删除",
+					OnClicked: func() { dlg.Cancel() },
+				},
+			},
 		},
 	}
 	dialog.Run(owner)
