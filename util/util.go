@@ -27,3 +27,9 @@ func GetValue(sec string, key string) (string, error) {
 	value, err := cfg.GetValue(sec, key)
 	return value, err
 }
+
+//设置值
+func SetValue(section, key, value string) bool {
+	do := cfg.SetValue(section, key, value)
+	return do
+}

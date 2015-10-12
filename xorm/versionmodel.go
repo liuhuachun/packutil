@@ -5,33 +5,33 @@ import (
 	"log"
 )
 
-type ProjectModel struct {
+type VersionModel struct {
 	walk.TableModelBase
 	walk.SorterBase
 	sortColumn int
 	sortOrder  walk.SortOrder
-	items      []*Project
+	items      []*Version
 }
 
-func NewProjectModel() *ProjectModel {
-	m := new(ProjectModel)
+func NewVersionModel() *VersionModel {
+	m := new(VersionModel)
 	m.ResetRows()
 	return m
 }
 
 // Called by the TableView from SetModel and every time the model publishes a
 // RowsReset event.
-func (m *ProjectModel) RowCount() int {
+func (m *VersionModel) RowCount() int {
 	return len(m.items)
 }
 
 //通过索引获取数据
-func (m *ProjectModel) GetItemByindex(index int64) *Project {
+func (m *VersionModel) GetVersionByindex(index int64) *Version {
 	return m.items[index]
 }
 
 // Called by the TableView when it needs the text to display for a given cell.
-func (m *ProjectModel) Value(row, col int) interface{} {
+func (m *VersionModel) Value(row, col int) interface{} {
 	item := m.items[row]
 
 	switch col {
@@ -54,7 +54,7 @@ func (m *ProjectModel) Value(row, col int) interface{} {
 }
 
 // Called by the TableView to sort the model.
-func (m *ProjectModel) Sort(col int, order walk.SortOrder) error {
+func (m *VersionModel) Sort(col int, order walk.SortOrder) error {
 	m.sortColumn, m.sortOrder = col, order
 
 	//	sort.Stable(m)
@@ -62,16 +62,16 @@ func (m *ProjectModel) Sort(col int, order walk.SortOrder) error {
 	return m.SorterBase.Sort(col, order)
 }
 
-func (m *ProjectModel) ResetRows() {
-	projects, err := FindAllDate()
+func (m *VersionModel) ResetRows() {
+	versions, err := FindAllVersionInfo()
 	if err != nil {
 		log.Fatalf("query all project fail, %v", err)
-		projects = make([]Project, 0)
+		versions = make([]Version, 0)
 	}
 
-	m.items = make([]*Project, len(projects))
-	for i, _ := range projects {
-		m.items[i] = &projects[i]
+	m.items = make([]*Version, len(versions))
+	for i, _ := range versions {
+		m.items[i] = &versions[i]
 	}
 	m.PublishRowsReset()
 

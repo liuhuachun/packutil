@@ -5,33 +5,33 @@ import (
 	"log"
 )
 
-type ProjectModel struct {
+type PatchModel struct {
 	walk.TableModelBase
 	walk.SorterBase
 	sortColumn int
 	sortOrder  walk.SortOrder
-	items      []*Project
+	items      []*Patch
 }
 
-func NewProjectModel() *ProjectModel {
-	m := new(ProjectModel)
+func NewPatchModel() *PatchModel {
+	m := new(PatchModel)
 	m.ResetRows()
 	return m
 }
 
 // Called by the TableView from SetModel and every time the model publishes a
 // RowsReset event.
-func (m *ProjectModel) RowCount() int {
+func (m *PatchModel) RowCount() int {
 	return len(m.items)
 }
 
 //通过索引获取数据
-func (m *ProjectModel) GetItemByindex(index int64) *Project {
+func (m *PatchModel) GetPatchByindex(index int64) *Patch {
 	return m.items[index]
 }
 
 // Called by the TableView when it needs the text to display for a given cell.
-func (m *ProjectModel) Value(row, col int) interface{} {
+func (m *PatchModel) Value(row, col int) interface{} {
 	item := m.items[row]
 
 	switch col {
@@ -39,7 +39,7 @@ func (m *ProjectModel) Value(row, col int) interface{} {
 		return item.Id
 
 	case 1:
-		return item.Name
+		return item.PatchName
 
 	case 2:
 		return item.CreateUser
@@ -54,7 +54,7 @@ func (m *ProjectModel) Value(row, col int) interface{} {
 }
 
 // Called by the TableView to sort the model.
-func (m *ProjectModel) Sort(col int, order walk.SortOrder) error {
+func (m *PatchModel) Sort(col int, order walk.SortOrder) error {
 	m.sortColumn, m.sortOrder = col, order
 
 	//	sort.Stable(m)
@@ -62,16 +62,16 @@ func (m *ProjectModel) Sort(col int, order walk.SortOrder) error {
 	return m.SorterBase.Sort(col, order)
 }
 
-func (m *ProjectModel) ResetRows() {
-	projects, err := FindAllDate()
+func (m *PatchModel) ResetRows() {
+	records, err := FindAllPatchInfo()
 	if err != nil {
 		log.Fatalf("query all project fail, %v", err)
-		projects = make([]Project, 0)
+		records = make([]Patch, 0)
 	}
 
-	m.items = make([]*Project, len(projects))
-	for i, _ := range projects {
-		m.items[i] = &projects[i]
+	m.items = make([]*Patch, len(records))
+	for i, _ := range records {
+		m.items[i] = &records[i]
 	}
 	m.PublishRowsReset()
 
